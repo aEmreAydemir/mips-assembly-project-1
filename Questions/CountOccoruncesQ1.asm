@@ -24,7 +24,7 @@
 		searchInput:
 		lb $t2,0($t0)
 		
-		bgt $t2,64,identifyCase
+		bge $t2,65,identifyCase
 		icContinue:
 		
 		beq $t2, $zero, endLoop 
@@ -36,25 +36,27 @@
 		j searchInput
 		
 		identifyCase:
-		blt $t2,91,upperCase
-		bgt $t2,96,lowerCase
-		j icContinue
+		ble $t2,90,upperCase
+		bge $t2,97,lowerCase
+		j Pointer
 		upperCase:
 		add $t2,$t2,-65
 		mul $t2,$t2,4
 		lw $t6,counter($t2)
 		add $t6,$t6,1
-		sw $t6,counter($t2)				
-		j icContinue
+		sw $t6,counter($t2)
+		add $t2,$zero,$zero				
+		j Pointer
 		
 		lowerCase:
-		bgt $t2,123,icContinue
+		bge $t2,123,Pointer
 		add $t2,$t2,-97
 		mul $t2,$t2,4
 		lw $t6,counter($t2)
 		add $t6,$t6,1
 		sw $t6,counter($t2)
-		j icContinue
+		add $t2,$zero,$zero
+		j Pointer
 		addi $t1,$t1,1
 		
 		
