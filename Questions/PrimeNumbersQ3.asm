@@ -6,9 +6,9 @@
 	userInput: .word 0
 	table: .word 1:1000001 #look up table for prime number function. #all numbers are set to 1/true initially
 .text
-	.globl main
+	.globl PrimeNumbers
 
-main:
+PrimeNumbers:
 		li $v0,4
 		la $a0,message #print message to enter max number
 		syscall
@@ -20,63 +20,63 @@ main:
 		
 		add $t1,$zero,2 #initialize t1
 		add $t2,$zero,$zero #t2 will be used for square of t1
-		add $t7,$zero,-1 #to sign non primes
+		add $t7,$zero,-1 #to sign non primes we ll use t7. it holds value -1
 	primeNumber:
-		mul $t2,$t1,$t1
-		bgt $t2,$t0,breakOut
+		#outer loop of eratosthenes algorithm
+	
+		#t1 is the iterator value here. it starts at 2. square of t1 is stored in t2
+		mul $t2,$t1,$t1 
+		bgt $t2,$t0,breakOut #if t2 exceed value of input entered by user, breakOut of the loop
 		
-		mul $t5,$t1,4 #to reach the value of the array at index t5 multiply by 4
-		lw  $t4,table($t5)
+		mul $t5,$t1,4 #to reach the value of the array at index t5 multiply by 4. because we need 4 bytes for each int
+		lw  $t4,table($t5) #load the value of table at current index
 		
-		add $t3,$t2,$zero #t3 is for inner for loop
-		beq $t4,1, detectNonPrimes
+		add $t3,$t2,$zero #t3 is for inner for loop 
+		beq $t4,1, detectNonPrimes #if $t4 is 1/true, enter inner loop 
 		#bne $t4,1,primeNumbersIncrementor
 		
-		j primeNumbersIncrementor
+		j primeNumbersIncrementor #if not, we dont need to check this. increment index by 1
 				
 		detectNonPrimes:
-		mul $t6,$t3,4
-		sw $t7,table($t6)
+		mul $t6,$t3,4 #again multiply by 4 to get current index at table array
+		sw $t7,table($t6) #since we know now its not prime, sign it with -1
 		
-		j detectNonPrimesIncrementor
+		j detectNonPrimesIncrementor #increment iterator
 		
 		detectNonPrimesIncrementor:	
-		add $t3,$t3,$t1
-		bgt $t3,$t0,primeNumbersIncrementor
+		add $t3,$t3,$t1 #our iterator is incremented by outer loops iterator value.
+		bgt $t3,$t0,primeNumbersIncrementor #if it exceeds input value, breakout to outer loop
 		j detectNonPrimes
 		
 		primeNumbersIncrementor:
-		add $t1,$t1,1
+		add $t1,$t1,1 #iterate to the next integer.
 		j primeNumber
 		
-	j breakOut
-	j primeNumber
-		
 		breakOut:
-		add $t6,$zero,$zero
-		mul $t1,$t0,4
-		add $t0,$zero,8
-		#add $t1,$zero,2	
+		add $t6,$zero,$zero #t6 is our counter for primes we marked
+		mul $t1,$t0,4 #t0 is what the user entered as input. by multiplying it with 4, we will set our loops top value
+		add $t0,$zero,8 #we start from index 2 (4*2=8) since we dont check 0,1
+		#add $t1,$t1,4	
 		countPrimes:
-		beq $t0,$t1,exit #104 comes from 26 * 4. 26 indexes for alphabets and 4 bytes of spaces for ints
+		bgt $t0,$t1,exit # limit value of loop is predefined at above code. its users input * 4bytes
 		
-		lw $t2,table($t0) #load the number of occorunces starting from a's occorunce
+		lw $t2,table($t0) # load the value at current index
 
-		beq $t2,1,incrementCounter
+		beq $t2,1,incrementCounter #if its 1/true. it means its marked as prime. incrementCounter
 		continueCounting:
-		li $v0,1
 		
 		addi $t0,$t0,4 #increment by 4 to get to the next int adress
 		j countPrimes	
 		
 		incrementCounter:
-		add $t6,$t6,1
+		add $t6,$t6,1 #if value is 1 increment counter here
 		j continueCounting
 					
 exit:
 		li $v0,1
 		move $a0,$t6
 		syscall
-
-		li $v0,10 #end program
-		syscall
+		
+    		jal     main #when the program is ended jump to menu instructions
+		#li $v0,10 #end program
+		#syscall
