@@ -4,7 +4,8 @@
 	userInput: .space 128 #user is allowed to enter a string with the length 128
 	counter: .word 0:26 #put 0 in 26 empty spaces for character counts in english alphabet
 .text	
-	main:
+	.globl CountAlphabet
+	CountAlphabet:
 		
 		li $v0,4
 		la $a0,message #print message
@@ -92,7 +93,9 @@
 		addi $t0,$t0,4 #increment by 4 to get to the next int adress
 		j while	
 	exit:
-					
-		li $v0,10 #end program
-		syscall
+		
+		jal     main #jump to main label inside Menu.asm			
+		
+		#li $v0,10 #end program
+		#syscall
 		
