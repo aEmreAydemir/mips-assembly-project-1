@@ -9,7 +9,6 @@
 	.globl main
 
 main:
-		
 		li $v0,4
 		la $a0,message #print message to enter max number
 		syscall
@@ -29,11 +28,12 @@ main:
 		mul $t5,$t1,4 #to reach the value of the array at index t5 multiply by 4
 		lw  $t4,table($t5)
 		
-		beq $t4,1, detectNonPrimes
-		bne $t4,1,primeNumbersIncrementor
-		
-		
 		add $t3,$t2,$zero #t3 is for inner for loop
+		beq $t4,1, detectNonPrimes
+		#bne $t4,1,primeNumbersIncrementor
+		
+		j primeNumbersIncrementor
+				
 		detectNonPrimes:
 		mul $t6,$t3,4
 		sw $t7,table($t6)
@@ -55,14 +55,13 @@ main:
 		breakOut:
 		add $t6,$zero,$zero
 		mul $t1,$t0,4
-		add $t0,$zero,$zero
+		add $t0,$zero,8
 		#add $t1,$zero,2	
 		countPrimes:
 		beq $t0,$t1,exit #104 comes from 26 * 4. 26 indexes for alphabets and 4 bytes of spaces for ints
 		
 		lw $t2,table($t0) #load the number of occorunces starting from a's occorunce
 
-		
 		beq $t2,1,incrementCounter
 		continueCounting:
 		li $v0,1
@@ -73,19 +72,11 @@ main:
 		incrementCounter:
 		add $t6,$t6,1
 		j continueCounting
-		
-		
-			
+					
 exit:
 		li $v0,1
 		move $a0,$t6
 		syscall
-		
-		#li $v0,1
-		#move $a0,$t1
-		#syscall
-		
+
 		li $v0,10 #end program
 		syscall
-		
-		
