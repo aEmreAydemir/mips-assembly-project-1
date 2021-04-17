@@ -56,13 +56,13 @@ main:
     jal     CountAlphabet
     
     execSort:
-    jal     PrimeNumbers
+    jal     Sort
     
     execPrime:
     jal     PrimeNumbers
     
     execHuffman:
-    jal     PrimeNumbers
+    jal     Huffman
     
     exitSys:
     # exit program
